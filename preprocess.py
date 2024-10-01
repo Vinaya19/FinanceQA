@@ -14,6 +14,6 @@ def get_text(pdf_path):
     return text
 
 if __name__ == "__main__":
-    pdf_path = "/Users/vinayabomnale/Desktop/Code/nlp_project/2023_Annual_Report.pdf"
+    pdf_path = "./2023_Annual_Report.pdf"
     raw_text = get_text(pdf_path)
     print(raw_text)
