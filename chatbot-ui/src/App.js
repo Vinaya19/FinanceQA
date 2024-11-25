@@ -21,7 +21,6 @@ function App() {
   const handleAskQuestion = async () => {
     const response = await axios.post('http://127.0.0.1:5000/ask', {
       question,
-      context: summary,
     });
 
     setAnswer(response.data.answer);
