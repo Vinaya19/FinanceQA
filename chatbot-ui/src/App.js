@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
+
 
 function App() {
   const [file, setFile] = useState(null);
   const [summary, setSummary] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
   const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
+  const [botResponse, setBotResponse] = useState('');
+  const [isChatting, setIsChatting] = useState(false);
 
   const handleFileUpload = async () => {
     const formData = new FormData();
@@ -16,52 +20,74 @@ function App() {
     });
 
     setSummary(response.data.summary);
+    setChatHistory([]);
+    setIsChatting(true); // Enable chat mode
   };
 
   const handleAskQuestion = async () => {
     const response = await axios.post('http://127.0.0.1:5000/ask', {
       question,
+      chatHistory,
     });
 
-    setAnswer(response.data.answer);
+    const answer = response.data.answer;
+    setChatHistory((prev) => [...prev, { question, answer }]); // Update chat history
+    setBotResponse(answer);
+    setQuestion(''); // Clear input after asking
+  };
+
+  const endChat = () => {
+    setIsChatting(false);
+    setChatHistory([]);
+    setSummary('');
+    setBotResponse('');
+    setQuestion('');
   };
 
   return (
     <div className="App">
       <h1>Document Chatbot</h1>
 
-      {/* File Upload Section */}
-      <div>
-        <h2>Upload Document</h2>
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-        <button onClick={handleFileUpload}>Upload & Summarize</button>
-      </div>
-
-      {/* Display Summary */}
-      {summary && (
+      {!isChatting && (
         <div>
-          <h2>Summary</h2>
-          <p>{summary}</p>
+          <h2>Upload Document</h2>
+          <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+          <button onClick={handleFileUpload}>Upload & Start Chat</button>
         </div>
       )}
 
-      {/* Question Answering Section */}
-      {summary && (
+      {isChatting && (
         <div>
-          <h2>Ask a Question</h2>
+          <h2>Summary</h2>
+          <p>{summary}</p>
+
+          <h2>Chat with the Document</h2>
+          <div>
+            {chatHistory.map((chat, index) => (
+              <div key={index}>
+                <p><strong>You:</strong> {chat.question}</p>
+                <p><strong>Bot:</strong> {chat.answer}</p>
+              </div>
+            ))}
+          </div>
+
           <input
             type="text"
-            placeholder="Type your question..."
+            placeholder="Ask a question..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
           <button onClick={handleAskQuestion}>Ask</button>
-          {answer && (
+
+          {/* {botResponse && (
             <div>
-              <h3>Answer:</h3>
-              <p>{answer}</p>
+              <p><strong>Bot:</strong> {botResponse}</p>
             </div>
-          )}
+          )} */}
+
+          <button onClick={endChat} style={{ marginTop: '20px', background: 'red', color: 'white' }}>
+            End Chat
+          </button>
         </div>
       )}
     </div>

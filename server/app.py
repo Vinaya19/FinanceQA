@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import PyPDF2
 import os
 
-# Load environment vairables from .env
+# Load environment variables from .env
 load_dotenv()
 
 # Get the API key from the .env file
@@ -35,29 +35,40 @@ def upload_file():
     extracted_text = extract_text_from_pdf(file)
 
     # Summarize the document using GPT-4
-    response = client.chat.completions.create(model="gpt-4o",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant skilled in summarizing documents."},
-        {"role": "user", "content": f"Summarize this document: {extracted_text}"}
-    ])
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant skilled in summarizing documents."},
+            {"role": "user", "content": f"Summarize this document: {extracted_text}"}
+        ]
+    )
 
     summary = response.choices[0].message.content
     return jsonify({"summary": summary})
 
-# Route to answer user questions
+# Route to handle chatbot interactions
 @app.route('/ask', methods=['POST'])
 def ask_question():
     global extracted_text
     data = request.get_json()
-    print("Data:",data)
     question = data['question']
+    chat_history = data.get('chatHistory', [])
+
+    # Prepare messages for GPT-4 based on chat history
+    messages = [{"role": "system", "content": "You are a helpful assistant answering questions based on a document."}]
+    messages.append({"role": "system", "content": f"Document Context: {extracted_text}"})
+
+    for chat in chat_history:
+        messages.append({"role": "user", "content": chat['question']})
+        messages.append({"role": "assistant", "content": chat['answer']})
+
+    messages.append({"role": "user", "content": question})
 
     # GPT-4 Question Answering
-    response = client.chat.completions.create(model="gpt-4o",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant answering questions based on a document."},
-        {"role": "user", "content": f"Context: {extracted_text}\nQuestion: {question}"}
-    ])
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=messages
+    )
 
     answer = response.choices[0].message.content
     return jsonify({"answer": answer})
