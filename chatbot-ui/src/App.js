@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-
 function App() {
   const [file, setFile] = useState(null);
   const [summary, setSummary] = useState('');
@@ -10,6 +9,7 @@ function App() {
   const [question, setQuestion] = useState('');
   const [botResponse, setBotResponse] = useState('');
   const [isChatting, setIsChatting] = useState(false);
+  const [greetingMessage, setGreetingMessage] = useState('');
 
   const handleFileUpload = async () => {
     const formData = new FormData();
@@ -21,7 +21,8 @@ function App() {
 
     setSummary(response.data.summary);
     setChatHistory([]);
-    setIsChatting(true); // Enable chat mode
+    setIsChatting(true);
+    setGreetingMessage('Hello! You can now chat with your document. 😊');
   };
 
   const handleAskQuestion = async () => {
@@ -31,9 +32,9 @@ function App() {
     });
 
     const answer = response.data.answer;
-    setChatHistory((prev) => [...prev, { question, answer }]); // Update chat history
+    setChatHistory((prev) => [...prev, { question, answer }]);
     setBotResponse(answer);
-    setQuestion(''); // Clear input after asking
+    setQuestion('');
   };
 
   const endChat = () => {
@@ -42,52 +43,59 @@ function App() {
     setSummary('');
     setBotResponse('');
     setQuestion('');
+    setGreetingMessage('Goodbye! Thanks for using our service. 👋');
   };
 
   return (
     <div className="App">
-      <h1>Document Chatbot</h1>
+      <h1>Finance Question Answer Bot</h1>
 
       {!isChatting && (
-        <div>
+        <div className="upload-section">
           <h2>Upload Document</h2>
           <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-          <button onClick={handleFileUpload}>Upload & Start Chat</button>
+          <button className="curved-button" onClick={handleFileUpload}>
+            Upload & Start Chat
+          </button>
         </div>
       )}
 
-      {isChatting && (
-        <div>
-          <h2>Summary</h2>
-          <p>{summary}</p>
+      {greetingMessage && <p className="greeting">{greetingMessage}</p>}
 
-          <h2>Chat with the Document</h2>
-          <div>
-            {chatHistory.map((chat, index) => (
-              <div key={index}>
-                <p><strong>You:</strong> {chat.question}</p>
-                <p><strong>Bot:</strong> {chat.answer}</p>
-              </div>
-            ))}
+      {isChatting && (
+        <div className="main-container">
+          <div className="summary-section">
+            <h2>Summary</h2>
+            <p>{summary}</p>
           </div>
 
-          <input
-            type="text"
-            placeholder="Ask a question..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-          <button onClick={handleAskQuestion}>Ask</button>
-
-          {/* {botResponse && (
-            <div>
-              <p><strong>Bot:</strong> {botResponse}</p>
+          <div className="chat-section">
+            <div className="chat-header">
+              <h2>Chat with the Document</h2>
+              <button className="end-chat-button" onClick={endChat}>X</button>
             </div>
-          )} */}
 
-          <button onClick={endChat} style={{ marginTop: '20px', background: 'red', color: 'white' }}>
-            End Chat
-          </button>
+            <div className="chat-history">
+              {chatHistory.map((chat, index) => (
+                <div key={index}>
+                  <p><strong>You:</strong> {chat.question}</p>
+                  <p><strong>Bot:</strong> {chat.answer}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="input-section">
+              <input
+                type="text"
+                placeholder="Ask a question..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+              <button className="curved-button ask-button" onClick={handleAskQuestion}>
+                Ask
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
