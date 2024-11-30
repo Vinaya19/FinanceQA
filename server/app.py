@@ -53,12 +53,15 @@ def ask_question():
     data = request.get_json()
     question = data['question']
     chat_history = data.get('chatHistory', [])
+    long_context = data.get('longContext', "")
 
     # Prepare messages for GPT-4 based on chat history
-    messages = [{"role": "system", "content": "You are a helpful assistant answering questions based on a document."}]
+    messages = [{"role": "system", "content": "You are a helpful assistant answering questions based on a document. If a user enters a question that isn't related to the document uploaded tell them politely to enter a relevant question. DO NOT HALLUCINATE!"}]
     messages.append({"role": "system", "content": f"Document Context: {extracted_text}"})
+    messages.append({"role": "system", "content": f"Long-Term Context: {long_context}"})
+    print('Chat History: ', chat_history)
 
-    for chat in chat_history:
+    for chat in chat_history[-5:]:
         messages.append({"role": "user", "content": chat['question']})
         messages.append({"role": "assistant", "content": chat['answer']})
 
@@ -71,7 +74,16 @@ def ask_question():
     )
 
     answer = response.choices[0].message.content
-    return jsonify({"answer": answer})
+
+    # Update the long context based on user question and answer
+    if len(long_context.split()) < 500:
+        long_context += f"\nUser: {question}\nAssistant: {answer}"
+
+    # # Check if the response indicates irrelevance
+    # if "ask a question relevant to the document" in answer.lower():
+    #     return jsonify({"answer": "Please ask a question relevant to the document."})
+
+    return jsonify({"answer": answer, "longContext": long_context})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -7,6 +7,7 @@ function App() {
   const [file, setFile] = useState(null);
   const [summary, setSummary] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [longContext, setLongContext] = useState("");
   const [question, setQuestion] = useState('');
   const [botResponse, setBotResponse] = useState('');
   const [isChatting, setIsChatting] = useState(false);
@@ -28,11 +29,13 @@ function App() {
     const response = await axios.post('http://127.0.0.1:5000/ask', {
       question,
       chatHistory,
+      longContext,
     });
 
     const answer = response.data.answer;
     setChatHistory((prev) => [...prev, { question, answer }]); // Update chat history
     setBotResponse(answer);
+    setLongContext(response.data.longContext);
     setQuestion(''); // Clear input after asking
   };
 
