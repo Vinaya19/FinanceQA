@@ -11,6 +11,7 @@ function App() {
   const [botResponse, setBotResponse] = useState('');
   const [isChatting, setIsChatting] = useState(false);
   const [greetingMessage, setGreetingMessage] = useState('');
+  const [chartUrl, setChartUrl] = useState(null);
 
   const handleFileUpload = async () => {
     const formData = new FormData();
@@ -38,6 +39,11 @@ function App() {
     setBotResponse(answer);
     setLongContext(response.data.longContext);
     setQuestion('');
+
+    // If the bot suggests visualization
+    // if (answer.toLowerCase().includes('visualize')) {
+    //   handleVisualization();
+    // }
   };
 
   const endChat = () => {
@@ -46,7 +52,7 @@ function App() {
     setSummary('');
     setBotResponse('');
     setQuestion('');
-    setGreetingMessage('Goodbye! Thanks for using our service. 👋');
+    setGreetingMessage('Goodbye! Thank you for using our service. 👋');
   };
 
   return (
