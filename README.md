@@ -2,6 +2,8 @@
 
 This project implements a chatbot that allows users to upload a financial document, generates a summary, and answers questions based on the uploaded document. It also creates visualizations for the user based on the numbers given the document.
 
+[![Finance Question Answer Bot](https://img.youtube.com/vi/04OIAvRQmO4?si=CRfsp67PFcEiRp2d/0.jpg)](https://www.youtube.com/watch?v=04OIAvRQmO4?si=CRfsp67PFcEiRp2d)
+
 ---
 
 ## Features
