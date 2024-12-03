@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
+function isNestedObject(obj) {
+  return Object.values(obj).some(value => typeof value === "object" && value !== null);
+}
+
 function App() {
   const [file, setFile] = useState(null);
   const [summary, setSummary] = useState('');
@@ -35,15 +39,37 @@ function App() {
     });
 
     const answer = response.data.answer;
+    if (response.data.visualizationData) {
+      handleVisualization(response.data.visualizationData);
+    }else{
+      setBotResponse(answer);
+    }
     setChatHistory((prev) => [...prev, { question, answer }]);
-    setBotResponse(answer);
     setLongContext(response.data.longContext);
     setQuestion('');
+  };
 
-    // If the bot suggests visualization
-    // if (answer.toLowerCase().includes('visualize')) {
-    //   handleVisualization();
-    // }
+  const handleVisualization = async (visualizationData) => {
+    let labels, values;
+    if (isNestedObject(visualizationData)){
+      console.log("Visualization Data",visualizationData);
+      const innerDict = Object.values(visualizationData)[0];
+      labels = Object.keys(innerDict);
+      values = Object.values(innerDict);
+      console.log("labels:",labels);
+      console.log("values:", values);
+    }else{
+      labels = Object.keys(visualizationData);
+      values = Object.values(visualizationData);      
+    }
+
+    const response = await axios.post('http://127.0.0.1:5000/visualize', {
+      numbers: values,
+      labels: labels,
+    }, { responseType: 'blob' });
+
+    const imageUrl = URL.createObjectURL(response.data);
+    setChartUrl(imageUrl);
   };
 
   const endChat = () => {
@@ -91,6 +117,14 @@ function App() {
                   <p><strong>Bot:</strong> {chat.answer}</p>
                 </div>
               ))}
+
+              {chartUrl && (
+                <div>
+                  <h2>Chart</h2>
+                  <img src={chartUrl} alt="Visualization" />
+                </div>
+              )}
+
             </div>
 
             <div className="input-section">

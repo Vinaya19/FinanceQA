@@ -4,6 +4,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import PyPDF2
 import os
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from io import BytesIO
 import re
@@ -32,24 +34,8 @@ def extract_text_from_pdf(file):
 
 def extract_visualization_data(answer):
     try:
-        start_idx = answer.find("json") + 4
-        end_idx = answer.rfind("```")
-        json_data = answer[start_idx:end_idx].strip()
-
-        # Getting only the data to visualize in case there is nested structure
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "Extract only the numerical values and their corresponding immediate names from the following JSON. Format the result as a clean dictionary of name-value pairs, where the name is the immediate key describing the number. Ignore nested structures beyond the immediate key."},
-                {"role": "user", "content": f"Here is the JSON: {json_data}"}
-            ]
-        )
-        visualization_data = {response.choices[0].message.content}
-        cleaned_response = re.sub(r'[`\\n\\t]', '', visualization_data).strip()
-
-        print("Data: ", cleaned_response)
-        #json_data = answer[start_idx:].split(":", 1)[1].strip()
-        print(eval(visualization_data))  # Convert JSON-like string to Python dictionary
+        json_content = re.search(r'```json\s*(\{.*\})\s*```', answer, re.DOTALL).group(1)
+        return eval(json_content)  # Convert JSON-like string to Python dictionary
     except Exception as error:
         print("An error occurred:", error)
         return None
@@ -102,17 +88,14 @@ def ask_question():
 
     answer = response.choices[0].message.content
 
-    # If answer contains visualization data, extract it
-    if 'json' in answer.lower():
-        visualization_data = extract_visualization_data(answer)
-        print(visualization_data)
-        #return jsonify({"answer": answer, "visualizationData": visualization_data})
-
     # Update the long context based on user question and answer
     if len(long_context.split()) < 500:
         long_context += f"\nUser: {question}\nAssistant: {answer}"
 
-    
+    # If answer contains visualization data, extract it
+    if 'json' in answer.lower():
+        visualization_data = extract_visualization_data(answer)
+        return jsonify({"answer": answer, "longContext": long_context, "visualizationData": visualization_data})   
 
     return jsonify({"answer": answer, "longContext": long_context})
 
@@ -120,12 +103,13 @@ def ask_question():
 def visualize():
     # Parse the request
     data = request.get_json()
+    print(data)
     numbers = data['numbers']  # Expecting an array of numbers
     labels = data.get('labels', [f"Item {i+1}" for i in range(len(numbers))])
 
     # Generate a bar chart
     plt.figure(figsize=(10, 6))
-    plt.bar(labels, numbers, color='skyblue')
+    plt.bar(labels, numbers)
     plt.xlabel('Labels')
     plt.ylabel('Values')
     plt.title('Visualization of Numbers')
