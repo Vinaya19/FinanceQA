@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
-  background-color: #f9f9f9;
+  background: linear-gradient(135deg, #ffffff, #e6f7ff); /* Light gradient background */
   color: #333;
 }
 
@@ -16,10 +16,15 @@ body {
 h1 {
   text-align: center;
   color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 h2 {
   color: #34495e;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
 p {
@@ -28,92 +33,166 @@ p {
 
 .upload-section {
   text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  justify-content: space-between; /* Adds space between the buttons */
+}
+
+.upload-section .curved-upload-button {
+  flex: 1; /* Ensures the input takes its required space */
+}
+
+.upload-section .curved-button {
+  flex: 1; /* Ensures the button takes its required space */
 }
 
 .greeting {
   text-align: center;
   color: #007BFF;
   font-weight: bold;
+  margin-top: 15px;
+  animation: fadeIn 1s ease-in;
 }
 
-/* Split Layout */
+/* Keyframe Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Main Container Styles */
 .main-container {
   display: flex;
-  gap: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 1200px;
+  height: 80vh;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff, #e8faff);
+  overflow: hidden;
+  margin: 20px auto;
+  padding: 10px 10px 10px 10px;
 }
 
 .summary-section, .chat-section {
   flex: 1;
-  padding: 20px;
-  border: 1px solid #ddd;
+  overflow-y: auto; /* Enable vertical scrolling for chat history */
+  padding: 15px;
   border-radius: 10px;
   background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.summary-section {
-  height: 100%;
-}
-
+/* Chat Section */
 .chat-section {
   display: flex;
   flex-direction: column;
-  height: 100%;
+   /* Full height of the parent container */
+  overflow: hidden; /* Prevent overflow for the entire section */
 }
 
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.end-chat-button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #dc3545;
-}
-
+/* Chat History */
 .chat-history {
-  flex-grow: 1;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
+  flex-grow: 1; /* Takes up all remaining space above the input section */
+  overflow-y: auto; /* Enable vertical scrolling for chat history */
+  padding: 15px;
+  border: 1px solid #ddd;
   background-color: #f5f5f5;
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
+.chat-history p {
+  margin: 5px 0;
+}
+
+.chat-history strong {
+  color: #007BFF;
+}
+
+/* Input Section */
 .input-section {
   display: flex;
   gap: 10px;
   align-items: center;
+  /* Add padding for spacing */
+  background-color: #fff; /* Ensure the input section has a solid background */
+  border-top: 1px solid #ddd; /* Separator line */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Shadow for a polished look */
+  position: sticky; /* Keep the input section static */
+  bottom: 0; /* Stick to the bottom of the container */
 }
 
+/* Input Field */
 input[type="text"] {
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 16px;
   width: 100%;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 10px 10px 10px 10px;
 }
 
+/* Button Styles */
 button.curved-button {
-  padding: 10px 15px;
+  padding: 12px 18px;
   border: none;
-  border-radius: 20px;
-  background-color: #007BFF;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #007BFF, #0056b3);
   color: white;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  margin: 10px 10px 10px 10px;
 }
 
 button.curved-button:hover {
-  background-color: #0056b3;
+  transform: scale(1.05);
+  box-shadow: 0px 6px 15px rgba(0, 123, 255, 0.5);
 }
 
-button.curved-button.ask-button {
-  border-radius: 5px;
+button.end-chat-button {
+  background: linear-gradient(135deg, #FF4D4D, #CC0000);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+button.end-chat-button:hover {
+  transform: scale(1.1);
+}
+
+.curved-upload-button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #007BFF, #0056b3);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.curved-upload-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 15px rgba(0, 123, 255, 0.5);
 }

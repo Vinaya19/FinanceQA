@@ -19,7 +19,12 @@ function App() {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    setSummary(response.data.summary);
+    const cleanSummary = response.data.summary
+    .replace(/\*\*(.+)\*\*/g, '<strong>$1</strong>')  // Replace **text** with <strong>text</strong>
+    .replace(/\*(.+)\*/g, '<strong>$1</strong>'); 
+
+
+    setSummary(cleanSummary);
     setChatHistory([]);
     setIsChatting(true);
     setGreetingMessage('Hello! You can now chat with your document. 😊');
@@ -53,7 +58,15 @@ function App() {
       {!isChatting && (
         <div className="upload-section">
           <h2>Upload Document</h2>
-          <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+          <label htmlFor="file-upload" className="curved-upload-button">
+            Choose File
+            <input
+              id="file-upload"
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              style={{ display: 'none' }}
+            />
+          </label>
           <button className="curved-button" onClick={handleFileUpload}>
             Upload & Start Chat
           </button>
@@ -66,7 +79,7 @@ function App() {
         <div className="main-container">
           <div className="summary-section">
             <h2>Summary</h2>
-            <p>{summary}</p>
+            <p dangerouslySetInnerHTML={{ __html: summary }} />
           </div>
 
           <div className="chat-section">
