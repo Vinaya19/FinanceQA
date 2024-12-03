@@ -28,9 +28,11 @@ This project implements a chatbot that allows users to upload a financial docume
   - Handle user inputs and display responses from the chatbot.
   
 ### Back-end
-- **Flask and Chat-GPT-4O**:
-  - Handle document processing, summarization, and Q&A.
+- **Flask Chat-GPT-4O**:
   - Communicate with the front-end via REST APIs.
+
+- **Chat-GPT-4O**:
+  - Handle document processing, summarization, and Q&A.
 
 ---
 
@@ -43,7 +45,7 @@ This project implements a chatbot that allows users to upload a financial docume
 4. Get your **OPEN AI API Key**
 3. Install **virtualenv** (optional but recommended for Python dependency management).
 
-### Steps to Setup and Run the Application
+### Steps to Run the Application
 
 #### 1. Set up the Server (Back-end)
 1. Create and activate a Python virtual environment (optional but recommended):
@@ -77,13 +79,16 @@ This project implements a chatbot that allows users to upload a financial docume
     ```bash
     npm start
 
-### 2. Usage Instructions
-## Uploading a Document:
+---
+
+## Usage Instructions
+
+### Uploading a Document:
 
 Use the file upload option to upload a document.
 Wait for the document to be processed. The bot will display a summary.
 
-## Asking Questions:
+### Asking Questions:
 Type a question about the document in the chat input box.
 The bot will respond with answers based on the document's content.
 You can also ask the bot to visualize any given numerical figures from the document.
